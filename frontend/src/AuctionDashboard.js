@@ -12,6 +12,7 @@ function AuctionDashboard() {
     description: '',
     startingBid: '',
     endDate: '',
+    image: null, // Add image to state
   });
   const [isEditing, setIsEditing] = useState(false);
   const { user, setUser } = useContext(UserContext);
@@ -54,19 +55,32 @@ function AuctionDashboard() {
     }));
   };
 
+  const handleFileChange = (event) => {
+    setCurrentAuction((prev) => ({
+      ...prev,
+      image: event.target.files[0],
+    }));
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
-    const auctionData = {
-      ...currentAuction,
-      userId: user.id
-    };
+    const auctionData = new FormData();
+    auctionData.append('userId', user.id);
+    auctionData.append('title', currentAuction.title);
+    auctionData.append('description', currentAuction.description);
+    auctionData.append('startingBid', currentAuction.startingBid);
+    auctionData.append('endDate', currentAuction.endDate);
+    if (currentAuction.image) {
+      auctionData.append('image', currentAuction.image);
+    }
+
     if (isEditing) {
       axios.put(`http://localhost:8081/auctions/${currentAuction.id}`, auctionData)
         .then(res => {
           alert('Auction item updated successfully!');
           fetchAuctions(user.id);
           setIsEditing(false);
-          setCurrentAuction({ id: '', title: '', description: '', startingBid: '', endDate: '' });
+          setCurrentAuction({ id: '', title: '', description: '', startingBid: '', endDate: '', image: null });
         })
         .catch(err => {
           console.error(err);
@@ -77,7 +91,7 @@ function AuctionDashboard() {
         .then(res => {
           alert('Auction item created successfully!');
           fetchAuctions(user.id);
-          setCurrentAuction({ id: '', title: '', description: '', startingBid: '', endDate: '' });
+          setCurrentAuction({ id: '', title: '', description: '', startingBid: '', endDate: '', image: null });
         })
         .catch(err => {
           console.error(err);
@@ -113,7 +127,7 @@ function AuctionDashboard() {
 
   return (
     <div>
-      <nav className="navbar navbar-expand-lg bg-body-tertiary">
+      <nav className="navbar navbar-expand-lg navbar-light">
         <div className="container-fluid">
           <a className="navbar-brand" href="#">Navbar</a>
           <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -125,7 +139,7 @@ function AuctionDashboard() {
                 <a className="nav-link active" aria-current="page" href="#">Bid</a>
               </li>
               <li className="nav-item">
-                <button className="nav-link btn btn-link" onClick={handleSellClick}>Sell</button>
+              <a className="nav-link" onClick={() => navigate('/Bid', { state: { email: user.email } })}>Sell</a>
               </li>
               <li className="nav-item">
                 <a className="nav-link" href="#" onClick={handleUpdateProfile}>Update Profile</a>
@@ -192,6 +206,16 @@ function AuctionDashboard() {
                 onChange={handleInputChange}
               />
             </div>
+            <div className="mb-3">
+              <label htmlFor="image">Image</label>
+              <input
+                type="file"
+                id="image"
+                name="image"
+                className="form-control"
+                onChange={handleFileChange}
+              />
+            </div>
             <button type="submit" className="btn btn-primary">
               {isEditing ? 'Update Auction' : 'Create Auction'}
             </button>
@@ -203,15 +227,18 @@ function AuctionDashboard() {
           {Array.isArray(auctions) && auctions.length > 0 ? (
             auctions.map(auction => (
               <div key={auction.id} className="auction-item">
-                <h4>{auction.title}</h4>
-                <p>{auction.description}</p>
-                <p>Starting Bid: ${auction.startingBid}</p>
-                <p>Current Bid: ${auction.currentBid}</p>
-                <p>End Date: {new Date(auction.endDate).toLocaleString()}</p>
-                <div className="auction-actions">
-                  <button onClick={() => handleEdit(auction)} className="btn btn-primary">Edit</button>
-                  <button onClick={() => handleDelete(auction.id)} className="btn btn-danger">Delete</button>
+                <div className="auction-item-details">
+                  <h4>{auction.title}</h4>
+                  <p>{auction.description}</p>
+                  <p>Starting Bid: ${auction.startingBid}</p>
+                  <p>Current Bid: ${auction.currentBid}</p>
+                  <p>End Date: {new Date(auction.endDate).toLocaleString()}</p>
+                  <div className="auction-actions">
+                    <button onClick={() => handleEdit(auction)} className="btn btn-primary">Edit</button>
+                    <button onClick={() => handleDelete(auction.id)} className="btn btn-danger">Delete</button>
+                  </div>
                 </div>
+                {auction.imagePath && <img src={`http://localhost:8081${auction.imagePath}`} alt={auction.title} />}
               </div>
             ))
           ) : (

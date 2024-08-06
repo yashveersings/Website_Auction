@@ -21,6 +21,7 @@ db.connect((err) => {
   console.log('Connected to the database');
 });
 
+
 app.post('/signup', (req, res) => {
   const sql = "INSERT INTO users (`name`, `email`, `password`, `securityQuestion`, `securityAnswer`) VALUES (?)";
   const values = [
@@ -176,19 +177,80 @@ app.post('/auctions/:id/bid', (req, res) => {
 });
 
 app.post('/placeBid', (req, res) => {
-  const { auctionId, bidAmount } = req.body;
-  const sql = "UPDATE auctions SET currentBid = ? WHERE id = ? AND (currentBid IS NULL OR currentBid < ?)";
-  db.query(sql, [bidAmount, auctionId, bidAmount], (err, result) => {
+  const { auctionId, bidAmount, email } = req.body;
+
+  // Start a transaction
+  db.beginTransaction((err) => {
+    if (err) {
+      console.error('Error starting transaction:', err);
+      return res.status(500).json({ status: "Error", message: "Error starting transaction" });
+    }
+
+    // Update the current bid and highest bidder in the auctions table
+    const updateAuctionSql = "UPDATE auctions SET currentBid = ?, highestBidder = ? WHERE id = ? AND (currentBid IS NULL OR currentBid < ?)";
+    db.query(updateAuctionSql, [bidAmount, email, auctionId, bidAmount], (err, result) => {
+      if (err) {
+        return db.rollback(() => {
+          console.error('Error during auction update:', err);
+          return res.status(500).json({ status: "Error", message: err.message });
+        });
+      }
+      if (result.affectedRows === 0) {
+        return db.rollback(() => {
+          return res.status(400).json({ status: "Failed", message: "Bid must be higher than current bid" });
+        });
+      }
+
+      // Fetch the auction details to insert into bidhistory
+      const fetchAuctionSql = "SELECT title FROM auctions WHERE id = ?";
+      db.query(fetchAuctionSql, [auctionId], (err, auctionResult) => {
+        if (err) {
+          return db.rollback(() => {
+            console.error('Error fetching auction details:', err);
+            return res.status(500).json({ status: "Error", message: err.message });
+          });
+        }
+
+        const auctionTitle = auctionResult[0].title;
+        const insertBidHistorySql = "INSERT INTO bidhistory (auctionId, title, bidAmount, email) VALUES (?, ?, ?, ?)";
+        db.query(insertBidHistorySql, [auctionId, auctionTitle, bidAmount, email], (err, result) => {
+          if (err) {
+            return db.rollback(() => {
+              console.error('Error inserting bid history:', err);
+              return res.status(500).json({ status: "Error", message: err.message });
+            });
+          }
+
+          // Commit the transaction
+          db.commit((err) => {
+            if (err) {
+              return db.rollback(() => {
+                console.error('Error committing transaction:', err);
+                return res.status(500).json({ status: "Error", message: "Error committing transaction" });
+              });
+            }
+
+            return res.json({ status: "Success", message: "Bid placed successfully" });
+          });
+        });
+      });
+    });
+  });
+});
+
+// Fetch bid history
+app.get('/bidHistory/:auctionId', (req, res) => {
+  const auctionId = req.params.auctionId;
+  const sql = "SELECT * FROM bidhistory WHERE auctionId = ?";
+  db.query(sql, [auctionId], (err, result) => {
     if (err) {
       console.error('Error during query execution:', err);
       return res.status(500).json({ status: "Error", message: err.message });
     }
-    if (result.affectedRows === 0) {
-      return res.status(400).json({ status: "Failed", message: "Bid must be higher than current bid" });
-    }
-    return res.json({ status: "Success", message: "Bid placed successfully" });
+    res.json(result);
   });
 });
+
 
 // Endpoint to get user data by email
 app.get('/getUserByEmail', (req, res) => {

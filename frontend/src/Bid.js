@@ -8,6 +8,8 @@ function Bid() {
   const { user } = useContext(UserContext);
   const navigate = useNavigate();
   const [auctions, setAuctions] = useState([]);
+  const [selectedAuction, setSelectedAuction] = useState(null);
+  const [bidHistory, setBidHistory] = useState([]);
 
   useEffect(() => {
     axios.get('http://localhost:8081/auctions')
@@ -51,17 +53,22 @@ function Bid() {
   }, []);
 
   const handleBid = (auctionId, startingBid, currentBid, bidAmount) => {
+    if (!user) {
+      alert("You must be logged in to place a bid.");
+      return;
+    }
+    
     if (isNaN(bidAmount) || bidAmount <= startingBid || (currentBid && bidAmount <= currentBid)) {
       alert("Bid must be a number and greater than the starting bid and current bid.");
       return;
     }
-    
-    axios.post('http://localhost:8081/placeBid', { auctionId, bidAmount })
+
+    axios.post('http://localhost:8081/placeBid', { auctionId, bidAmount, email: user.email })
       .then(res => {
         if (res.data.status === "Success") {
           setAuctions(prevAuctions => 
             prevAuctions.map(auction => 
-              auction.id === auctionId ? { ...auction, currentBid: bidAmount } : auction
+              auction.id === auctionId ? { ...auction, currentBid: bidAmount, highestBidder: user.email } : auction
             )
           );
           alert("Bid placed successfully!");
@@ -70,6 +77,20 @@ function Bid() {
         }
       })
       .catch(err => console.log(err));
+  };
+
+  const fetchBidHistory = (auctionId) => {
+    axios.get(`http://localhost:8081/bidHistory/${auctionId}`)
+      .then(res => {
+        setBidHistory(res.data);
+        setSelectedAuction(auctionId);
+      })
+      .catch(err => console.log(err));
+  };
+
+  const handleClosePopup = () => {
+    setSelectedAuction(null);
+    setBidHistory([]);
   };
 
   return (
@@ -86,10 +107,10 @@ function Bid() {
                 <a className="nav-link active" aria-current="page" href="#">Bid</a>
               </li>
               <li className="nav-item">
-              <a className="nav-link" onClick={() => navigate('/AuctionDashboard', { state: { email: user.email } })}>Sell</a>
-            </li>
+                <a className="nav-link" onClick={() => navigate('/AuctionDashboard', { state: { email: user ? user.email : '' } })}>Sell</a>
+              </li>
               <li className="nav-item">
-                <a className="nav-link" onClick={() => navigate('/UpdateProfile', { state: { email: user.email } })}>Update Profile</a>
+                <a className="nav-link" onClick={() => navigate('/UpdateProfile', { state: { email: user ? user.email : '' } })}>Update Profile</a>
               </li>
               <li className="nav-item">
                 <a className="nav-link" href="#">Log Out</a>
@@ -109,6 +130,7 @@ function Bid() {
             <p>{auction.description}</p>
             <p>Starting Bid: ${auction.startingBid}</p>
             <p>Current Bid: ${auction.currentBid || 'No bids yet'}</p>
+            <p>Highest Bidder: {auction.highestBidder || 'No bids yet'}</p>
             <p className={auction.timeRemaining === "Bid ended" ? "bid-ended" : ""}>
               {auction.timeRemaining || calculateTimeRemaining(auction.endDate)}
             </p>
@@ -124,11 +146,47 @@ function Bid() {
                 >
                   Place Bid
                 </button>
+                <button 
+                  onClick={() => fetchBidHistory(auction.id)}
+                >
+                  Bid History
+                </button>
               </div>
             )}
           </div>
         ))}
       </div>
+
+      {selectedAuction && (
+        <div className="popup-overlay">
+          <div className="popup-content">
+            <h2>Bid History</h2>
+            <button className="close-popup" onClick={handleClosePopup}>Close</button>
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Title</th>
+                  <th>Bid Amount</th>
+                  <th>Email</th>
+                  <th>Bid Time</th>
+                </tr>
+              </thead>
+              <tbody>
+                {bidHistory.map(bid => (
+                  <tr key={bid.id}>
+                    <td>{bid.id}</td>
+                    <td>{bid.title}</td>
+                    <td>${bid.bidAmount}</td>
+                    <td>{bid.email}</td>
+                    <td>{new Date(bid.bidTime).toLocaleString()}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
