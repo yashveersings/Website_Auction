@@ -1,20 +1,70 @@
 .update-profile-container {
-    padding: 20px;
-    max-width: 600px;
-    margin: auto;
-  }
-  
-  .update-profile-container h2 {
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  
-  .update-profile-container .form-control {
-    margin-bottom: 10px;
-  }
-  
-  .update-profile-container .btn {
-    display: block;
-    width: 100%;
-  }
-  
+  padding: 30px;
+  max-width: 700px;
+  margin: 30px auto;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.update-profile-container h2 {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 1.8rem;
+  color: #333;
+}
+
+.update-profile-container .form-control {
+  margin-bottom: 15px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  font-size: 1rem;
+}
+
+.update-profile-container .form-control:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.25);
+}
+
+.update-profile-container .btn {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  font-size: 1.2rem;
+  border-radius: 4px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.update-profile-container .btn:hover {
+  background-color: #0056b3;
+}
+
+.update-profile-container .form-group {
+  margin-bottom: 20px;
+}
+
+.update-profile-container .form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #555;
+}
+
+.update-profile-container .form-group select {
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  font-size: 1rem;
+  width: 100%;
+}
+
+.update-profile-container .form-group select:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.25);
+}

@@ -90,6 +90,7 @@ app.get('/auctions', (req, res) => {
   });
 });
 
+
 app.post('/auctions', (req, res) => {
   const { userId, title, description, startingBid, endDate } = req.body;
   const sql = "INSERT INTO auctions (`userId`, `title`, `description`, `startingBid`, `endDate`) VALUES (?)";
@@ -110,17 +111,18 @@ app.post('/auctions', (req, res) => {
   });
 });
 
-app.get('/auctions/:id', (req, res) => {
-  const { id } = req.params;
-  const sql = "SELECT * FROM auctions WHERE id = ?";
-  db.query(sql, [id], (err, data) => {
+app.get('/auctions/user/:userId', (req, res) => {
+  const { userId } = req.params;
+  const sql = "SELECT * FROM auctions WHERE userId = ?";
+  db.query(sql, [userId], (err, data) => {
     if (err) {
       console.error('Error during query execution:', err);
       return res.status(500).json("Error");
     }
-    return res.json(data[0]);
+    return res.json(data);
   });
 });
+
 
 app.put('/auctions/:id', (req, res) => {
   const { id } = req.params;
@@ -173,16 +175,62 @@ app.post('/auctions/:id/bid', (req, res) => {
   });
 });
 
-app.put('/users/:id', (req, res) => {
-  const { id } = req.params;
-  const { name, email, password, securityQuestion, securityAnswer } = req.body;
-  const sql = "UPDATE users SET name = ?, email = ?, password = ?, securityQuestion = ?, securityAnswer = ? WHERE id = ?";
-  db.query(sql, [name, email, password, securityQuestion, securityAnswer, id], (err, data) => {
+app.post('/placeBid', (req, res) => {
+  const { auctionId, bidAmount } = req.body;
+  const sql = "UPDATE auctions SET currentBid = ? WHERE id = ? AND (currentBid IS NULL OR currentBid < ?)";
+  db.query(sql, [bidAmount, auctionId, bidAmount], (err, result) => {
     if (err) {
       console.error('Error during query execution:', err);
-      return res.status(500).json("Error");
+      return res.status(500).json({ status: "Error", message: err.message });
     }
-    return res.json("Profile updated successfully.");
+    if (result.affectedRows === 0) {
+      return res.status(400).json({ status: "Failed", message: "Bid must be higher than current bid" });
+    }
+    return res.json({ status: "Success", message: "Bid placed successfully" });
+  });
+});
+
+// Endpoint to get user data by email
+app.get('/getUserByEmail', (req, res) => {
+  const email = req.query.email;
+  const sql = "SELECT * FROM users WHERE email = ?";
+  
+  db.query(sql, [email], (err, data) => {
+    if (err) {
+      console.error('Error during query execution:', err);
+      return res.status(500).json({ status: "Error", message: err.message });
+    }
+    if (data.length > 0) {
+      return res.json(data[0]);
+    } else {
+      return res.status(404).json({ status: "Not Found", message: "User not found" });
+    }
+  });
+});
+
+
+// Endpoint to update user profile
+app.post('/updateProfile', (req, res) => {
+  const { name, email, password, securityQuestion, securityAnswer } = req.body;
+
+  if (!name || !email || !password || !securityQuestion || !securityAnswer) {
+    return res.status(400).json({ status: "Failed", message: "All fields are required" });
+  }
+
+  const sql = `UPDATE users 
+               SET name = ?, password = ?, securityQuestion = ?, securityAnswer = ?
+               WHERE email = ?`;
+
+  db.query(sql, [name, password, securityQuestion, securityAnswer, email], (err, result) => {
+    if (err) {
+      console.error('Error during query execution:', err);
+      return res.status(500).json({ status: "Error", message: err.message });
+    }
+    if (result.affectedRows > 0) {
+      return res.json({ status: "Success", message: "Profile updated successfully" });
+    } else {
+      return res.status(404).json({ status: "Not Found", message: "User not found" });
+    }
   });
 });
 
