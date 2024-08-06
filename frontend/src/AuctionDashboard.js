@@ -94,6 +94,7 @@ function AuctionDashboard() {
   };
 
   return (
+    
     <div className="auction-dashboard-container">
       <header className="dashboard-header">
         <h1>Hi {user.name}</h1>

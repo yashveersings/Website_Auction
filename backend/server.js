@@ -41,15 +41,15 @@ app.post('/signup', (req, res) => {
 });
 
 app.post('/login', (req, res) => {
-  const sql = "SELECT * FROM users WHERE `email` = ? AND password = ?";
+  const sql = "SELECT * FROM users WHERE `email` = ? AND `password` = ?";
   db.query(sql, [req.body.email, req.body.password], (err, data) => {
     if (err) {
-      return res.json("Error");
+      return res.json({ status: "Error", message: err.message });
     }
-    if(data.length > 0) {
+    if (data.length > 0) {
       return res.json({ status: "Success", user: data[0] });
     } else {
-      return res.json({ status: "Failed" });
+      return res.json({ status: "Failed", message: "Invalid credentials" });
     }
   });
 });

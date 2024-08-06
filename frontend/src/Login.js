@@ -1,41 +1,38 @@
 import './Login.css'; // Import the CSS file
 import Validation from './LoginValidation';
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { UserContext } from './UserContext';
 
 function Login() {
  
-  const [values, setValues] = useState({
-    email: '',
-    password: ''
-  })
-
+  const [values, setValues] = useState({ email: '', password: '' });
+  const [errors, setErrors] = useState({});
+  const { setUser } = useContext(UserContext);
   const navigate = useNavigate();
-  const [errors, setErrors] = useState({})
 
   const handleInput = (event) => {
-    setValues(prev => ({...prev, [event.target.name]: [event.target.value]}))
-  }
+    setValues(prev => ({ ...prev, [event.target.name]: event.target.value }));
+  };
 
-  const handleSubmit =(event) => {
+  const handleSubmit = (event) => {
     event.preventDefault();
-    const err = Validation(values);
+    const err = Validation(values); // Assuming Validation is a function you have defined
     setErrors(err);
-    if(errors.email === "" && errors.password === ""){
+    if (!err.email && !err.password) {
       axios.post('http://localhost:8081/login', values)
-      .then(res => {
-        if (res.data == "Success") {
-          navigate('/AuctionDashboard');
-        }
-        else
-        {
-          alert("No Record Found !!");
-        }
-      })
-      .catch(err => console.log(err));
+        .then(res => {
+          if (res.data.status === "Success") {
+            setUser(res.data.user); // Set the user information in context
+            navigate('/Bid');
+          } else {
+            alert(res.data.message || "No Record Found !!");
+          }
+        })
+        .catch(err => console.log(err));
     }
-  }
+  };
 
 
   return (
