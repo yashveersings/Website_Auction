@@ -10,13 +10,15 @@ function Bid() {
   const [auctions, setAuctions] = useState([]);
   const [selectedAuction, setSelectedAuction] = useState(null);
   const [bidHistory, setBidHistory] = useState([]);
+  const [currentBid, setCurrentBid] = useState({});
 
   useEffect(() => {
     axios.get('http://localhost:8081/auctions')
       .then(res => {
         const updatedAuctions = res.data.map(auction => ({
           ...auction,
-          timeRemaining: calculateTimeRemaining(auction.endDate)
+          timeRemaining: calculateTimeRemaining(auction.endDate),
+          imageUrl: auction.imagePath ? `http://localhost:8081${auction.imagePath}` : null,
         }));
         setAuctions(updatedAuctions);
       })
@@ -52,13 +54,14 @@ function Bid() {
     return () => clearInterval(interval);
   }, []);
 
-  const handleBid = (auctionId, startingBid, currentBid, bidAmount) => {
+  const handleBid = (auctionId, startingBid, currentBidAmount) => {
     if (!user) {
       alert("You must be logged in to place a bid.");
       return;
     }
     
-    if (isNaN(bidAmount) || bidAmount <= startingBid || (currentBid && bidAmount <= currentBid)) {
+    const bidAmount = currentBid[auctionId];
+    if (isNaN(bidAmount) || bidAmount <= startingBid || (currentBidAmount && bidAmount <= currentBidAmount)) {
       alert("Bid must be a number and greater than the starting bid and current bid.");
       return;
     }
@@ -125,7 +128,7 @@ function Bid() {
       <div className="auction-container">
         {auctions.map(auction => (
           <div key={auction.id} className="auction-card">
-            <img src={auction.imageUrl} alt={auction.title} className="auction-image" />
+            {auction.imageUrl && <img src={auction.imageUrl} alt={auction.title} className="auction-image" />}
             <h2>{auction.title}</h2>
             <p>{auction.description}</p>
             <p>Starting Bid: ${auction.startingBid}</p>
@@ -139,10 +142,10 @@ function Bid() {
                 <input 
                   type="number" 
                   placeholder="Enter your bid" 
-                  onChange={(e) => auction.newBid = parseFloat(e.target.value)} 
+                  onChange={(e) => setCurrentBid(prev => ({ ...prev, [auction.id]: parseFloat(e.target.value) }))}
                 />
                 <button 
-                  onClick={() => handleBid(auction.id, auction.startingBid, auction.currentBid, auction.newBid)}
+                  onClick={() => handleBid(auction.id, auction.startingBid, auction.currentBid)}
                 >
                   Place Bid
                 </button>

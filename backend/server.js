@@ -1,10 +1,13 @@
 const express = require("express");
 const mysql = require('mysql');
 const cors = require('cors');
+const multer = require('multer');
+const path = require('path');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 const db = mysql.createConnection({
   host: "localhost",
@@ -20,6 +23,17 @@ db.connect((err) => {
   }
   console.log('Connected to the database');
 });
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/');
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
+  }
+});
+
+const upload = multer({ storage });
 
 
 app.post('/signup', (req, res) => {
@@ -92,16 +106,11 @@ app.get('/auctions', (req, res) => {
 });
 
 
-app.post('/auctions', (req, res) => {
+app.post('/auctions', upload.single('image'), (req, res) => {
   const { userId, title, description, startingBid, endDate } = req.body;
-  const sql = "INSERT INTO auctions (`userId`, `title`, `description`, `startingBid`, `endDate`) VALUES (?)";
-  const values = [
-    userId,
-    title,
-    description,
-    startingBid,
-    endDate
-  ];
+  const imagePath = req.file ? `/uploads/${req.file.filename}` : null;
+  const sql = "INSERT INTO auctions (userId, title, description, startingBid, endDate, imagePath) VALUES (?)";
+  const values = [userId, title, description, startingBid, endDate, imagePath];
 
   db.query(sql, [values], (err, data) => {
     if (err) {
