@@ -6,7 +6,6 @@ import axios from "axios";
 import { UserContext } from './UserContext';
 
 function Login() {
- 
   const [values, setValues] = useState({ email: '', password: '' });
   const [errors, setErrors] = useState({});
   const { setUser } = useContext(UserContext);
@@ -18,13 +17,13 @@ function Login() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const err = Validation(values); // Assuming Validation is a function you have defined
+    const err = Validation(values);
     setErrors(err);
     if (!err.email && !err.password) {
       axios.post('http://localhost:8081/login', values)
         .then(res => {
           if (res.data.status === "Success") {
-            setUser(res.data.user); // Set the user information in context
+            setUser(res.data.user);
             navigate('/Bid');
           } else {
             alert(res.data.message || "No Record Found !!");
@@ -33,7 +32,6 @@ function Login() {
         .catch(err => console.log(err));
     }
   };
-
 
   return (
     <div className="login-container">

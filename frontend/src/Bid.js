@@ -29,7 +29,7 @@ function Bid() {
     const now = new Date();
     const end = new Date(endDate);
     const timeRemaining = end - now;
-    
+
     if (timeRemaining <= 0) {
       return "Bid ended";
     }
@@ -43,7 +43,7 @@ function Bid() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setAuctions(prevAuctions => 
+      setAuctions(prevAuctions =>
         prevAuctions.map(auction => ({
           ...auction,
           timeRemaining: calculateTimeRemaining(auction.endDate)
@@ -59,7 +59,7 @@ function Bid() {
       alert("You must be logged in to place a bid.");
       return;
     }
-    
+
     const bidAmount = currentBid[auctionId];
     if (isNaN(bidAmount) || bidAmount <= startingBid || (currentBidAmount && bidAmount <= currentBidAmount)) {
       alert("Bid must be a number and greater than the starting bid and current bid.");
@@ -69,8 +69,8 @@ function Bid() {
     axios.post('http://localhost:8081/placeBid', { auctionId, bidAmount, email: user.email })
       .then(res => {
         if (res.data.status === "Success") {
-          setAuctions(prevAuctions => 
-            prevAuctions.map(auction => 
+          setAuctions(prevAuctions =>
+            prevAuctions.map(auction =>
               auction.id === auctionId ? { ...auction, currentBid: bidAmount, highestBidder: user.email } : auction
             )
           );
@@ -139,17 +139,17 @@ function Bid() {
             </p>
             {auction.timeRemaining !== "Bid ended" && (
               <div className="bid-section">
-                <input 
-                  type="number" 
-                  placeholder="Enter your bid" 
+                <input
+                  type="number"
+                  placeholder="Enter your bid"
                   onChange={(e) => setCurrentBid(prev => ({ ...prev, [auction.id]: parseFloat(e.target.value) }))}
                 />
-                <button 
+                <button
                   onClick={() => handleBid(auction.id, auction.startingBid, auction.currentBid)}
                 >
                   Place Bid
                 </button>
-                <button 
+                <button
                   onClick={() => fetchBidHistory(auction.id)}
                 >
                   Bid History

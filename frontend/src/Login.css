@@ -1,9 +1,8 @@
-/* Login.css */
 body, html {
     height: 100%;
     margin: 0;
     font-family: 'Arial', sans-serif;
-    background: linear-gradient(90deg, #8EC5FC 0%, #E0C3FC 100%);
+    background: #f0f0f0; /* Changed to a grayish background */
 }
 
 .login-container {
@@ -17,9 +16,9 @@ body, html {
 .login-box {
     display: flex;
     flex-direction: column;
-    background-color: white;
+    background-color: #ffffff;
     border-radius: 1rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     overflow: hidden;
     width: 100%;
     max-width: 900px;
@@ -32,11 +31,11 @@ body, html {
 
 .login-form h2 {
     margin-bottom: 1rem;
-    color: #343a40;
+    color: #333333; /* Darker color for a more professional look */
 }
 
 .login-form p {
-    color: #6c757d;
+    color: #666666; /* Darker color for a more professional look */
     margin-bottom: 1.5rem;
 }
 
@@ -44,42 +43,45 @@ body, html {
     display: block;
     font-weight: bold;
     margin-bottom: 0.5rem;
-    color: #343a40;
+    color: #333333; /* Darker color for a more professional look */
 }
 
 .login-form input {
     margin-bottom: 1rem;
     padding: 0.75rem;
-    border: 1px solid #ced4da;
+    border: 1px solid #cccccc; /* Lighter border for a softer look */
     border-radius: 0.25rem;
     width: 100%;
+    font-size: 1rem; /* Slightly larger font for better readability */
 }
 
 .login-form button {
-    background-color: #4A90E2;
-    color: white;
+    background-color: #333333; /* Darker button color */
+    color: #ffffff;
     font-weight: bold;
     padding: 0.75rem;
     border: none;
     border-radius: 0.25rem;
     width: 100%;
     cursor: pointer;
+    font-size: 1rem; /* Slightly larger font for better readability */
 }
 
 .login-form button:hover {
-    background-color: #357ABD;
+    background-color: #555555; /* Slightly lighter on hover */
 }
 
-.login-form .forgot-password {
+.login-form .ForgotPassword {
     display: block;
     text-align: right;
     margin-top: -0.5rem;
     margin-bottom: 1rem;
-    color: #007bff;
+    color: #666666; /* Darker color for a more professional look */
     text-decoration: none;
+    font-size: 0.9rem; /* Slightly smaller font for subtlety */
 }
 
-.login-form .forgot-password:hover {
+.login-form .ForgotPassword:hover {
     text-decoration: underline;
 }
 
@@ -89,7 +91,7 @@ body, html {
 }
 
 .login-form .signup-link a {
-    color: #007bff;
+    color: #333333; /* Darker color for a more professional look */
     text-decoration: none;
     font-weight: bold;
 }
