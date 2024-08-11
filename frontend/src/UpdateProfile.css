@@ -8,6 +8,12 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+.updateprofile {
+
+  font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #f6d365, #fda085); /* Light yellow to darker yellow gradient */
+}
+
 .update-profile-container h2 {
   text-align: center;
   margin-bottom: 30px;
@@ -67,4 +73,10 @@
 .update-profile-container .form-group select:focus {
   border-color: #007bff;
   box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.25);
+}
+
+.navbar {
+  background-color: #1331c9; /* Light yellow background */
+  color: #fff; /* White text */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Adds depth with a shadow */
 }

@@ -1,9 +1,4 @@
-body, html {
-    height: 100%;
-    margin: 0;
-    font-family: 'Arial', sans-serif;
-    background: #f0f0f0; /* Changed to a grayish background */
-}
+
 
 .login-container {
     display: flex;
@@ -11,6 +6,9 @@ body, html {
     align-items: center;
     height: 100vh;
     padding: 1rem;
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #f6d365, #fda085); /* Light yellow to darker yellow gradient */
+
 }
 
 .login-box {
