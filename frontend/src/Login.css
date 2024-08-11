@@ -7,7 +7,6 @@
     height: 100vh;
     padding: 1rem;
     font-family: 'Arial', sans-serif;
-    background: linear-gradient(135deg, #f6d365, #fda085); /* Light yellow to darker yellow gradient */
 
 }
 
@@ -54,7 +53,7 @@
 }
 
 .login-form button {
-    background-color: #333333; /* Darker button color */
+    background-color: #0056b3;
     color: #ffffff;
     font-weight: bold;
     padding: 0.75rem;

@@ -117,14 +117,6 @@ function AuctionDashboard() {
       });
   };
 
-  const handleUpdateProfile = () => {
-    navigate('/UpdateProfile', { state: { email: user.email } });
-  };
-
-  const handleSellClick = () => {
-    navigate('/AuctionDashboard', { state: { email: user.email } });
-  };
-
   return (
     <div className='auctiondash'>
       <nav className="navbar navbar-expand-lg">
@@ -136,16 +128,16 @@ function AuctionDashboard() {
           <div className="collapse navbar-collapse" id="navbarNav">
             <ul className="navbar-nav">
               <li className="nav-item">
-                <a className="nav-link active" aria-current="page" href="#">Bid</a>
+                <a className="nav-link active" onClick={() => navigate('/Bid', { state: { email: user ? user.email : '' } })}>Bid</a>
               </li>
               <li className="nav-item">
-              <a className="nav-link" onClick={() => navigate('/Bid', { state: { email: user.email } })}>Sell</a>
+                <a className="nav-link active">Sell</a>
               </li>
               <li className="nav-item">
-                <a className="nav-link" href="#" onClick={handleUpdateProfile}>Update Profile</a>
+                <a className="nav-link active" onClick={() => navigate('/UpdateProfile', { state: { email: user ? user.email : '' } })}>Update Profile</a>
               </li>
               <li className="nav-item">
-                <a className="nav-link" href="#">Log Out</a>
+                <a className="nav-link active" onClick={() => navigate('/')}>Log Out</a>
               </li>
               <li className="nav-item">
                 <a className="nav-link">{user ? user.email : 'Disabled'}</a>

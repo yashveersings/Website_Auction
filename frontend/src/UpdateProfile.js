@@ -73,19 +73,19 @@ function UpdateProfile() {
           <div className="collapse navbar-collapse" id="navbarNav">
             <ul className="navbar-nav">
               <li className="nav-item">
-                <a className="nav-link" href="#">Bid</a>
+                <a className="nav-link active" onClick={() => navigate('/Bid', { state: { email: user ? user.email : '' } })}>Bid</a>
               </li>
               <li className="nav-item">
-                <a className="nav-link" href="#">Sell</a>
+                <a className="nav-link active" onClick={() => navigate('/AuctionDashboard', { state: { email: user ? user.email : '' } })}>Sell</a>
               </li>
               <li className="nav-item">
-                <a className="nav-link active" aria-current="page" href="#">Update Profile</a>
+                <a className="nav-link active">Update Profile</a>
               </li>
               <li className="nav-item">
-                <a className="nav-link" href="#">Log Out</a>
+                <a className="nav-link active" onClick={() => navigate('/')}>Log Out</a>
               </li>
               <li className="nav-item">
-                <a className="nav-link">{email}</a>
+                <a className="nav-link">{user ? user.email : 'Disabled'}</a>
               </li>
             </ul>
           </div>

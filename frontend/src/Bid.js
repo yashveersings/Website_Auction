@@ -110,13 +110,13 @@ function Bid() {
                 <a className="nav-link active" aria-current="page" href="#">Bid</a>
               </li>
               <li className="nav-item">
-                <a className="nav-link" onClick={() => navigate('/AuctionDashboard', { state: { email: user ? user.email : '' } })}>Sell</a>
+                <a className="nav-link active" onClick={() => navigate('/AuctionDashboard', { state: { email: user ? user.email : '' } })}>Sell</a>
               </li>
               <li className="nav-item">
-                <a className="nav-link" onClick={() => navigate('/UpdateProfile', { state: { email: user ? user.email : '' } })}>Update Profile</a>
+                <a className="nav-link active" onClick={() => navigate('/UpdateProfile', { state: { email: user ? user.email : '' } })}>Update Profile</a>
               </li>
               <li className="nav-item">
-                <a className="nav-link" href="#">Log Out</a>
+                <a className="nav-link active" onClick={() => navigate('/')}>Log Out</a>
               </li>
               <li className="nav-item">
                 <a className="nav-link">{user ? user.email : 'Disabled'}</a>
@@ -149,6 +149,7 @@ function Bid() {
                 >
                   Place Bid
                 </button>
+                
                 <button
                   onClick={() => fetchBidHistory(auction.id)}
                 >

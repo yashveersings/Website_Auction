@@ -8,7 +8,6 @@ body {
 
 .auctiondash {
   font-family: 'Arial', sans-serif;
-    background: linear-gradient(135deg, #f6d365, #fda085); /* Light yellow to darker yellow gradient */
 }
 
 .auction-dashboard-container {

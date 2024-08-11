@@ -8,7 +8,6 @@ body {
 
 .bidpage {
   font-family: 'Arial', sans-serif;
-    background: linear-gradient(135deg, #f6d365, #fda085); /* Light yellow to darker yellow gradient */
 }
 
 .auction-container {
@@ -26,17 +25,25 @@ body {
   border-radius: 10px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   max-width: 300px;
+  width: 100%; /* Ensure full width within the container */
   text-align: center;
   position: relative;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.auction-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .auction-image {
   max-width: 100%;
   height: auto;
   border-radius: 10px;
+  margin-bottom: 15px;
 }
 
 .auction-card h2 {
@@ -46,11 +53,10 @@ body {
 
 .auction-card p {
   margin: 5px 0;
-  color: #555;
 }
 
 .bid-ended {
-  color: rgb(117, 4, 4);
+  color: #d9534f;
   font-weight: bold;
 }
 
@@ -58,7 +64,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 10px;
+  margin-top: 20px;
 }
 
 .bid-section input {
@@ -67,6 +73,8 @@ body {
   border: 1px solid #ddd;
   border-radius: 5px;
   width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .bid-section button {
@@ -77,7 +85,12 @@ body {
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  width: 100%; /* Ensure the button takes the full width of the input */
+  width: 100%;
+  margin-bottom: 10px; /* Adds spacing between buttons */
+}
+
+.bid-section button:last-child {
+  margin-bottom: 0;
 }
 
 .bid-section button:hover {
@@ -134,21 +147,20 @@ th {
 }
 
 .navbar {
-  background-color: #1331c9; /* Light yellow background */
-  color: #fff; /* White text */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Adds depth with a shadow */
+  background-color: #1331c9;
+  color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .navbar-brand, .nav-link {
-  color: #ffffff; /* Ensures text is white for visibility */
-  font-size: 18px; /* Larger font size for better readability */
+  color: #ffffff;
+  font-size: 18px;
 }
 
 .navbar-toggler {
-  border-color: rgba(255, 255, 255, 0.5); /* Visible toggler in light color */
+  border-color: rgba(255, 255, 255, 0.5);
 }
 
 .navbar-toggler-icon {
   background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'><path stroke='rgba(255, 255, 255, 0.7)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/></svg>");
-  /* Custom SVG toggler icon for better visibility */
 }
